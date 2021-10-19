@@ -1,0 +1,8 @@
+# Ignore artifacts:
+dist
+coverage
+node_modules
+.eslintcache
+
+# Ignore all HTML files:
+*.html
