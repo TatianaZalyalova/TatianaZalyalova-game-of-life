@@ -1,0 +1,25 @@
+body {
+  font-family: sans-serif;
+}
+
+.gameField {
+  display: inline-block;
+  margin: 30px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.cell {
+  border: 1px solid black;
+  color: lightgray;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+.cell--alive {
+  background-color: black;
+}
+
