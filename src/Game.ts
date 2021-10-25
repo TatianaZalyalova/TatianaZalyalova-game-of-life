@@ -15,6 +15,25 @@ export class Game {
       stepDurationMs = Number(inputRange.value);
     }
     let isGameRun = false;
+    const buttonClean = document.querySelector(
+      ".clean-button"
+    ) as HTMLButtonElement;
+    if (buttonClean) {
+      buttonClean.addEventListener("click", function () {
+        const allLiveCells = document.querySelectorAll(".cell.cell--alive");
+        allLiveCells.forEach((item) => {
+          item.classList.remove("cell--alive");
+        });
+
+        for (let i = 0; i < gameField.arrState.length; i++) {
+          for (let j = 0; j < gameField.arrState[i].length; j++) {
+            if (gameField.arrState[i][j] === 1) {
+              gameField.arrState[i][j] = 0;
+            }
+          }
+        }
+      });
+    }
 
     gameView.updateGameField(state);
     gameView.updateGameState({
@@ -41,27 +60,33 @@ export class Game {
         isRunning: gameRunState,
       });
       isGameRun = gameRunState;
-      if (gameRunState) {
-        gameField.nextGeneration();
-        gameView.updateGameField(gameField.getState());
+      if (buttonClean) {
+        buttonClean.disabled = true;
       }
     });
 
     function tick(): void {
       if (isGameRun) {
-        gameField.nextGeneration();
-        gameView.updateGameField(gameField.getState());
-        inputRange?.addEventListener("change", function () {
-          clearInterval(interval);
-          stepDurationMs = Number(inputRange.value);
-          interval = setInterval(tick, stepDurationMs);
-        });
         const numberOfLivingCells: number | null =
           document.querySelectorAll(".cell.cell--alive").length;
-        if (numberOfLivingCells === 0) {
+        const stateCorrent = gameField.nextGeneration();
+        if (numberOfLivingCells === 0 || stateCorrent === false) {
           isGameRun = false;
           gameView.updateGameState({
             isRunning: isGameRun,
+          });
+          if (gameField.arrStateBefore) {
+            gameField.arrStateBefore.length = 0;
+          }
+          if (buttonClean) {
+            buttonClean.disabled = false;
+          }
+        } else {
+          gameView.updateGameField(gameField.getState());
+          inputRange?.addEventListener("change", function () {
+            clearInterval(interval);
+            stepDurationMs = Number(inputRange.value);
+            interval = setInterval(tick, stepDurationMs);
           });
         }
       }

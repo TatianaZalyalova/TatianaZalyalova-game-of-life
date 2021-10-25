@@ -1,13 +1,13 @@
 export interface IGameView {
-  updateGameField(field: number[][]): void;
-  updateGameState(state: {
+  updateGameField: (field: number[][]) => void;
+  updateGameState: (state: {
     width?: number;
     height?: number;
     isRunning?: boolean;
-  }): void;
-  onCellClick(cb: (x: number, y: number) => void): any;
-  onGameStateChange(cb: (newState: boolean) => void): any;
-  onFieldSizeChange(cb: (width: number, height: number) => void): any;
+  }) => void;
+  onCellClick: (cb: (x: number, y: number) => void) => void;
+  onGameStateChange: (cb: (newState: boolean) => void) => void;
+  onFieldSizeChange: (cb: (width: number, height: number) => void) => void;
 }
 
 export class GameView implements IGameView {
@@ -21,11 +21,18 @@ export class GameView implements IGameView {
     gameControls.classList.add("gameControls");
     el.appendChild(gameControls);
 
-    const buttonStopped: HTMLElement = document.createElement("button");
+    const buttonStopped: HTMLButtonElement = document.createElement("button");
     buttonStopped.classList.add("run-button");
     buttonStopped.classList.add("run-button--stopped");
     buttonStopped.innerHTML = "Play";
     gameControls.appendChild(buttonStopped);
+
+    const buttonClean: HTMLButtonElement = document.createElement("button");
+    buttonClean.classList.add("clean-button");
+    //buttonStopped.classList.add("run-button--stopped");
+    //buttonClean.disabled = true;
+    buttonClean.innerHTML = "Clean";
+    gameControls.appendChild(buttonClean);
 
     const inputSizeWidth: HTMLElement = document.createElement("input");
     inputSizeWidth.classList.add("field-size");
@@ -117,7 +124,7 @@ export class GameView implements IGameView {
       cb(newState);
     }
 
-    buttonRun.addEventListener("click", callCbStateChange, true);
+    buttonRun.addEventListener("click", callCbStateChange);
   }
 
   onFieldSizeChange(cb: (width: number, height: number) => void) {

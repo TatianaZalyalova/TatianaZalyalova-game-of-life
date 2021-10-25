@@ -22,3 +22,7 @@ table {
 .cell--alive {
   background-color: black;
 }
+
+button {
+  padding: 0 10px;
+}

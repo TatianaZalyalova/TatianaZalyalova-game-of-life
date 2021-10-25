@@ -1,19 +1,44 @@
 export interface IGameField {
-  getState(): number[][];
-  toggleCellState(x: number, y: number): any;
-  nextGeneration(): any;
-  setSize(width: number, height: number): any;
+  getState: () => number[][];
+  toggleCellState: (x: number, y: number) => void;
+  nextGeneration: () => void;
+  setSize: (width: number, height: number) => void;
   arrState: number[][];
+  arrStateBefore: string[];
 }
 
 export class GameField implements IGameField {
   width;
   height;
   arrState;
+
   constructor(width: number = 0, height: number = 1) {
     this.width = width;
     this.height = height;
     this.arrState = this.getState();
+  }
+  arrStateBefore = [""];
+
+  nextGeneration() {
+    this.getArrStateBefore(this.arrStateBefore);
+    const nextGenerationArr = this.arrState.map((row, y) =>
+      row.map((cell, x) => this.getNextCellState(x, y))
+    );
+    const nextGenerationArrStr: string = nextGenerationArr.join("");
+    if (this.arrStateBefore.includes(nextGenerationArrStr)) {
+      return false;
+    } else {
+      this.arrState = nextGenerationArr;
+    }
+  }
+
+  getArrStateBefore(arrStateBefore: string[]): void {
+    if (arrStateBefore.indexOf(this.getState().join("")) === -1) {
+      arrStateBefore.push(this.getState().join(""));
+    }
+    if (arrStateBefore.length >= 3) {
+      arrStateBefore.shift();
+    }
   }
 
   getState(): number[][] {
@@ -64,19 +89,10 @@ export class GameField implements IGameField {
   getNextCellState(x: number, y: number) {
     const liveCount = this.getNumberOfNeighbour(x, y);
     const isAlive = this.isCellAlive(x, y);
-    if (isAlive && (liveCount === 3 || liveCount === 2)) {
-      return 1;
-    } else if (liveCount === 3) {
+    if ((isAlive && (liveCount === 3 || liveCount === 2)) || liveCount === 3) {
       return 1;
     }
     return 0;
-  }
-
-  nextGeneration() {
-    const nextGenerationArr = this.arrState.map((row, y) =>
-      row.map((cell, x) => this.getNextCellState(x, y))
-    );
-    this.arrState = nextGenerationArr;
   }
 
   setSize(newWidth: number, newHeight: number) {
