@@ -1,1 +1,0 @@
-﻿# TatianaZalyalova-game-of-life
